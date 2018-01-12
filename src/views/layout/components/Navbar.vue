@@ -5,24 +5,15 @@
     <breadcrumb class="breadcrumb-container"></breadcrumb>
 
     <div class="right-menu">
+      <error-log class="errLog-container right-menu-item"></error-log>
 
-      <error-log v-if="log.length>0" class="errLog-container right-menu-item" :logsList="log"></error-log>
-
-      <el-tooltip effect="dark" content="全屏" placement="bottom">
+      <el-tooltip effect="dark" :content="$t('navbar.screenfull')" placement="bottom">
         <screenfull class="screenfull right-menu-item"></screenfull>
       </el-tooltip>
 
-      <el-dropdown trigger="click" class='international' @command="handleSetLanguage">
-        <div>
-          <svg-icon class-name='right-menu-item international-icon' icon-class="language" />
-        </div>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="zh" :disabled="language==='zh'">中文</el-dropdown-item>
-          <el-dropdown-item command="en" :disabled="language==='en'">English</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+      <lang-select class="international right-menu-item"></lang-select>
 
-      <el-tooltip effect="dark" content="换肤" placement="bottom">
+      <el-tooltip effect="dark" :content="$t('navbar.theme')" placement="bottom">
         <theme-picker class="theme-switch right-menu-item"></theme-picker>
       </el-tooltip>
 
@@ -34,16 +25,16 @@
         <el-dropdown-menu slot="dropdown">
           <router-link to="/">
             <el-dropdown-item>
-              首页
+              {{$t('navbar.dashboard')}}
             </el-dropdown-item>
           </router-link>
           <a target='_blank' href="https://github.com/PanJiaChen/vue-element-admin/">
             <el-dropdown-item>
-              项目地址
+              {{$t('navbar.github')}}
             </el-dropdown-item>
           </a>
           <el-dropdown-item divided>
-            <span @click="logout" style="display:block;">退出登录</span>
+            <span @click="logout" style="display:block;">{{$t('navbar.logOut')}}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -55,47 +46,34 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import ThemePicker from '@/components/ThemePicker'
+import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
-import ErrorLog from '@/components/ErrLog'
-import errLogStore from 'store/errLog'
+import LangSelect from '@/components/LangSelect'
+import ThemePicker from '@/components/ThemePicker'
 
 export default {
   components: {
     Breadcrumb,
     Hamburger,
-    ThemePicker,
     ErrorLog,
-    Screenfull
-  },
-  data() {
-    return {
-      log: errLogStore.state.errLog
-    }
+    Screenfull,
+    LangSelect,
+    ThemePicker
   },
   computed: {
     ...mapGetters([
       'sidebar',
       'name',
-      'avatar',
-      'language'
+      'avatar'
     ])
   },
   methods: {
     toggleSideBar() {
       this.$store.dispatch('toggleSideBar')
     },
-    handleSetLanguage(lang) {
-      this.$i18n.locale = lang
-      this.$store.dispatch('setLanguage', lang)
-      this.$message({
-        message: 'switch language success',
-        type: 'success'
-      })
-    },
     logout() {
       this.$store.dispatch('LogOut').then(() => {
-        location.reload()// 为了重新实例化vue-router对象 避免bug
+        location.reload()// In order to re-instantiate the vue-router object to avoid bugs
       })
     }
   }
@@ -135,11 +113,6 @@ export default {
     }
     .international{
       vertical-align: top;
-      .international-icon{
-        font-size: 20px;
-        cursor: pointer;
-        vertical-align: -5px;
-      }
     }
     .theme-switch {
       vertical-align: 15px;
@@ -167,6 +140,3 @@ export default {
   }
 }
 </style>
-
-
-
